@@ -53,7 +53,7 @@
     {% block page_content %}{% endblock %}
 </div>
 
-{# include 'site/includes/footer/footer.html' #}
+{% include 'site/includes/footer/dark-footer.html' %}
 
 
 
@@ -62,6 +62,109 @@
 
 {# JS macros #}
 <script src="/static/output/macros.js"></script>
+
+
+
+<script>
+window.onload = renderCard;
+
+
+function setCartData(o){
+        localStorage.setItem('flask-shop-card', JSON.stringify(o));
+        return false;
+    }
+        
+        
+function getCartData(){
+        return JSON.parse(localStorage.getItem('flask-shop-card'));
+    }
+        
+
+function renderCard(){
+        currentCount = Number($('#cardCount').text())
+        if (typeof(Storage) !== "undefined") {
+            // Code for localStorage/sessionStorage.
+            } else {
+                alert('Корзина магазина не доступна для вашего браузера');
+            // Sorry! No Web Storage support..
+        }
+        var cartData = getCartData() || {}
+        if(cartData !== null) {
+                        for(var item in cartData) {
+                                        if (cartData[item][3] === 0) {
+                continue;
+            }
+            else if (cartData[item][3] < 0) {
+                continue;
+            }
+
+                            currentCount = currentCount+Number(cartData[item][3]);
+                            cardItem = '<li id="li' + item +'"><span class="item"><span class="item-left"><img style="width="50px" height="50px" src="'+ cartData[item][1] + '" alt="" /><span class="item-info">' +
+                '<span>' + cartData[item][0] + '</span><br><span id=span' + item + '>' + cartData[item][2] + ' x ' +  cartData[item][3] + '</span></span></span><span class="item-right"><button onclick="itemDelete('+item+')" class="btn btn-xs btn-danger pull-right">x</button></span></span></li>'
+                $('#cardNav').prepend(cardItem)
+        }
+        $('#cardCount').text(currentCount)
+            }
+        else {
+            alert('LocalStorage is clear!')
+            $('#cardCount').text(Number(0))
+
+    }
+}
+
+        $('.fa-shopping-cart').click(function(){
+            var cartData = getCartData() || {}
+            var info = this.parentNode.parentNode.parentNode
+            var item = this.parentNode.parentNode.parentNode.parentNode
+            var photoes = this.parentNode.parentNode.parentNode.parentNode.parentNode
+            var photo = photoes.childNodes[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].attributes[0].value
+            var name = info.querySelector('h5').innerHTML
+            var id = item.attributes.getNamedItem('id').value
+            var price = info.childNodes[1].childNodes[1].childNodes[3].innerHTML
+            var currentCount = $('#cardCount').text()
+            //var setCount = $('#cardCount').text(Number(currentCount)+1)
+
+            if(cartData[id][3] >= 1){
+                cartData[id][3] += 1;
+                var currentCount = Number($('#cardCount').text())
+                $('#cardCount').text(Number(currentCount)+1)
+
+                countItem = Number(($('#span'+id).text()).split('x')[1])
+                $('#span'+id).text(price + ' x ' + (Number(countItem) + 1))
+                } else { // если товара в корзине еще нет, то добавляем в объект
+                    cartData[id] = [name, photo, price, 1];
+                    var cardItem = '<li id="li' + id +'"><span class="item"><span class="item-left"><img style="width="50px" height="50px" src="'+ photo + '" alt="" /><span class="item-info">' +
+                '<span>' + name + '</span><br><span id=span' + id + '>' + price + ' x ' +  cartData[id][3] + '</span></span></span><span class="item-right"><button onclick="itemDelete('+id+')" class="btn btn-xs btn-danger pull-right">x</button></span></span></li>'
+                    $('#cardNav').prepend(cardItem)
+
+                }
+                if(!setCartData(cartData)){ // Обновляем данные в LocalStorage
+                    alert('set data to localstorage')
+                }
+                return false;
+
+            })
+
+function itemDelete(id) {
+    var cartData = getCartData() || {}
+    if(cartData[id][3] >= 2){ 
+                countItem = Number(($('#span'+id).text()).split('x')[1])
+                alert(countItem)
+                $('#span'+id).text(cartData[id][2] + ' x ' + (Number(countItem) - 1))
+                } 
+                else { 
+                    cartData[id] = [cartData[id][0], cartData[id][1], cartData[id][2], 0];
+                    elem = document.getElementById('li' + id +'')
+                    elem.parentNode.removeChild(elem);
+                }
+                cartData[id][3] -= 1;
+                setCartData(cartData)                
+                currentCount = $('#cardCount').text()
+                $('#cardCount').text(Number(currentCount)-1)
+
+}
+</script>
+
 
 {# JS page #}
 {% block page_js %}{% endblock %}

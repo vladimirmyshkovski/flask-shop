@@ -10,12 +10,12 @@ bp = Blueprint('site', __name__)
 @bp.route('/')
 def index():
     """Index page."""
-    subnames = Product.query.group_by(Product.subname).all()
+    new_products = Product.query.order_by(Product.created_at.desc()).limit(8)
+    all_products = Product.query.limit(6)
 
-    for i in Product.query.group_by(Product.subname).all():
-    	print((i.subname))
-
-    return render_template('site/index/index.html')
+    return render_template('site/index/index.html', 
+    	new_products=new_products,
+    	all_products=all_products)
 
 
 @bp.route('/about')

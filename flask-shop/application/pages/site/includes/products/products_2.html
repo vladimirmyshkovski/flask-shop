@@ -19,20 +19,20 @@
         <div id="carousel-example-2" class="carousel slide hidden-xs" data-ride="carousel">
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
-                {% for i in range(2) %}
+                {% for items in all_products | batch(3, '&nbsp;') %}
                 <div class="item {{ loop.cycle('active', '') }}">
                     <div class="row">
-                        {% for item in range(3) %}
+                        {% for product in items %}
                         <div class="col-sm-4">
-                            <div class="col-item">
+                            <div class="col-item" id="{{product.id}}">
                                 <div class="photo">
-                                    <img src="http://placehold.it/350x260" class="img-responsive" alt="a" />
+                                    <img src="{{product.image[1:-1][1:].split("', '")[0]}}" class="img-responsive" alt="{{product.name}}" />
                                 </div>
                                 <div class="info">
                                     <div class="row">
                                         <div class="price col-md-6">
                                             <h5>
-                                                Sample Product</h5>
+                                                {{product.name}}</h5>
                                             <h5 class="price-text-color">
                                                 $199.99</h5>
                                         </div>
