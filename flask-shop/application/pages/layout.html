@@ -112,17 +112,14 @@ function renderCard(){
     }
 }
 
-        $('.fa-shopping-cart').click(function(){
-            var cartData = getCartData() || {}
-            var info = this.parentNode.parentNode.parentNode
-            var item = this.parentNode.parentNode.parentNode.parentNode
-            var photoes = this.parentNode.parentNode.parentNode.parentNode.parentNode
-            var photo = photoes.childNodes[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[1].attributes[0].value
-            var name = info.querySelector('h5').innerHTML
-            var id = item.attributes.getNamedItem('id').value
-            var price = info.childNodes[1].childNodes[1].childNodes[3].innerHTML
-            var currentCount = $('#cardCount').text()
-            //var setCount = $('#cardCount').text(Number(currentCount)+1)
+
+function itemAdd(id) {
+    var cartData = getCartData() || {}
+    var names = document.getElementById('product_name'+id).innerHTML
+    var photo = document.getElementById('product_photo'+id).getAttribute('src')
+    var price = document.getElementById('product_price'+id).innerHTML
+    var currentCount = $('#cardCount').text()
+    //var setCount = $('#cardCount').text(Number(currentCount)+1)
 
             if(cartData[id][3] >= 1){
                 cartData[id][3] += 1;
@@ -135,21 +132,22 @@ function renderCard(){
                     cartData[id] = [name, photo, price, 1];
                     var cardItem = '<li id="li' + id +'"><span class="item"><span class="item-left"><img style="width="50px" height="50px" src="'+ photo + '" alt="" /><span class="item-info">' +
                 '<span>' + name + '</span><br><span id=span' + id + '>' + price + ' x ' +  cartData[id][3] + '</span></span></span><span class="item-right"><button onclick="itemDelete('+id+')" class="btn btn-xs btn-danger pull-right">x</button></span></span></li>'
+                    var currentCount = Number($('#cardCount').text())
+                    $('#cardCount').text(Number(currentCount)+1)
                     $('#cardNav').prepend(cardItem)
 
                 }
                 if(!setCartData(cartData)){ // Обновляем данные в LocalStorage
-                    alert('set data to localstorage')
+                    //alert('set data to localstorage')
                 }
                 return false;
-
-            })
+}
 
 function itemDelete(id) {
     var cartData = getCartData() || {}
     if(cartData[id][3] >= 2){ 
                 countItem = Number(($('#span'+id).text()).split('x')[1])
-                alert(countItem)
+                //alert(countItem)
                 $('#span'+id).text(cartData[id][2] + ' x ' + (Number(countItem) - 1))
                 } 
                 else { 

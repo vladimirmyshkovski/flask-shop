@@ -21,9 +21,9 @@
                                 </ol>
                                 <div class="carousel-inner">
                                     {% for image in product.image[2:-2].split("', '") %}
-                                    <div class="item {% if loop.first %} active" id="product_photo{{product.id}}"{% else %}{% endif %}">
+                                    <div class="item {% if loop.first %} active{% else %}{% endif %}">
                                         <div class="photo">
-                                            <img src="http:{{image}}" class="img-responsive" alt="{{product.nane}}" />
+                                            <img src="http:{{image}}" {% if loop.first %} id="product_photo{{product.id}}" {% endif %} class="img-responsive" alt="{{product.nane}}" />
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="separator clear-left">
                                         <p>
-                                            <a class="fa fa-shopping-cart fa-2x btn btn-md" class="hidden-sm"></a>
+                                            <a class="fa fa-shopping-cart fa-2x btn btn-md" onclick="itemAdd({{product.id}})" class="hidden-sm"></a>
                                             <a class="fa fa-list fa-2x btn btn-md" class="hidden-sm"></a>
                                         </p>
                                     </div>

@@ -89,7 +89,15 @@
             <li><a href="#">Store locator</a></li>
 		</ul>
         <ul class="nav navbar-nav navbar-right">
+        <!--li><a href="#">My cart (0) items</a></li-->
         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span class="fa fa-shopping-cart"></span> <span id="cardCount">0</span> - Items<span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-cart" role="menu" id="cardNav">
+              <li class="divider"></li>
+              <li><a class="text-center" href="">View Cart</a></li>
+          </ul>
+        </li>
+          <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My account <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="#">Action</a></li>
@@ -97,14 +105,6 @@
             <li><a href="#">Something else here</a></li>
             <li class="divider"></li>
             <li><a href="#">Separated link</a></li>
-          </ul>
-        </li>
-        <!--li><a href="#">My cart (0) items</a></li-->
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span class="fa fa-shopping-cart"></span> <span id="cardCount">0</span> - Items<span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-cart" role="menu" id="cardNav">
-              <li class="divider"></li>
-              <li><a class="text-center" href="">View Cart</a></li>
           </ul>
         </li>
       </ul>
