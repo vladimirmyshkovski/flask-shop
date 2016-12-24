@@ -24,6 +24,14 @@ def about():
     return render_template('site/about/about.html')
 
 
+@bp.route('/<keyword>')
+def product(keyword):
+    """Product page."""
+    print(keyword)
+    query = Product.query
+    product = query.filter(Product.id == keyword).first()
+    return render_template('site/product/product.html', product=product)
+
 
 #@bp.context_processor
 #def menu():

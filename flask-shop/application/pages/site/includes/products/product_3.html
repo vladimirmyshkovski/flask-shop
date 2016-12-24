@@ -1,0 +1,35 @@
+{% block page_css %}
+<link rel="stylesheet" href="/pages/site/includes/products/product_3.css"/>{% endblock %}
+<div class="container">
+	<div class="row">
+    	<!-- BEGIN PRODUCTS -->
+      {% for product in all_products %}
+  		<div class="col-md-3 col-sm-6">
+    		<span class="thumbnail">
+      			<a href="{{url_for('site.product', keyword=product.id)}}"><img src="{{product.image[1:-1][1:].split("', '")[0]}}" alt="{{product.name}}"></a>
+      			<h6>{{product.name}}</h6>
+      			<div class="ratings">
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star-empty"></span>
+                </div>
+      			<p></p>
+      			<hr class="line">
+      			<div class="row">
+      				<div class="col-md-6 col-sm-6">
+      					<p class="price">$29,90</p>
+      				</div>
+      				<div class="col-md-6 col-sm-6">
+      					<button class="btn btn-success right" > BUY ITEM</button>
+      				</div>
+      				
+      			</div>
+    		</span>
+  		</div>
+      {% endfor %}
+  		<!-- END PRODUCTS -->
+	</div>
+
+</div>
