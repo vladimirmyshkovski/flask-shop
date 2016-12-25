@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block page_title %}{{product.name}}{% endblock %}
+{% block page_js %}{% endblock %}
 {% block page_css %}
 <link rel="stylesheet" href="/pages/site/product/product.css"/>{% endblock %}
 {% block page_content %}
@@ -9,11 +10,12 @@
 			<div class="container-fliud">
 				<div class="wrapper row">
 					<div class="preview col-md-6">
-						
+						<div class="easyzoom easyzoom--overlay easyzoom--with-thumbnails">
 						<div class="preview-pic tab-content">
 						{% for image in product.image[2:-2].split("', '") %}
 						  <div class="tab-pane {% if loop.first %}active{% endif %}" id="pic-{{loop.index}}"><img src="{{image}}" /></div>
 						{% endfor %}
+						</div>
 						</div>
 						<ul class="preview-thumbnail nav nav-tabs">
 						{% for image in product.image[2:-2].split("', '") %}
