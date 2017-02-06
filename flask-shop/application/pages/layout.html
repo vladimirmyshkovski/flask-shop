@@ -1,169 +1,77 @@
 <!doctype html>
 <html>
 <head>
-    <title>{% block page_title %}{% endblock %}</title>
+    <title>{{% block page_title %}}{{% endblock %}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    {% block meta %}{% endblock %}
+    {{% block meta %}}{{% endblock %}}
     <link rel="Shortcut Icon" href="/static/image/favicon.png">
-    {# CSS libs #}
+    {{# CSS libs #}}
     <link rel="stylesheet" href="/static/css/libs/bootstrap.min.css"/>
     <link rel="stylesheet" href="/static/css/libs/font-awesome.min.css"/>
-    {# CSS layout #}
+    {{# CSS layout #}}
     <link rel="stylesheet" href="/static/css/bootstrap.theme.css"/>
     <link rel="stylesheet" href="/static/css/common.css"/>
     <link rel="stylesheet" href="/static/output/macros.css"/>
     <link rel="stylesheet" href="/static/css/layout.css"/>
-    {# CSS page #}
-    {% block page_css %}{% endblock %}
-    {# JS global vars #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.css"/>
+
+    {{# CSS page #}}
+    {{% block page_css %}}{{% endblock %}}
+    {{# JS global vars #}}
     <script type="text/javascript">
         var g = {
-            domain: "{{ config.SITE_DOMAIN }}",
-            csrfToken: "{{ csrf_token() }}",
-            rules: {{ rules|safe }},
-            method: "{{ request.method }}",
-            signin: {% if g.user %}true{% else %}false{% endif %},
-            userId: {% if g.user %}{{ g.user.id }}{% else %}false{% endif %}
+            domain: "{{{ config.SITE_DOMAIN }}}",
+            csrfToken: "{{{ csrf_token() }}}",
+            rules: {{{ rules|safe }}},
+            method: "{{{ request.method }}}",
+            signin: {{% if g.user %}}true{{% else %}}false{{% endif %}},
+            userId: {{% if g.user %}}{{{ g.user.id }}}{{% else %}}false{{% endif %}}
         };
     </script>
-    {# JS libs #}
+    {{# JS libs #}}
     <script src="/static/js/libs/respond.min.js"></script>
     <script src="/static/js/libs/jquery.min.js"></script>
     <script src="/static/js/libs/bootstrap.min.js"></script>
+    <script src="/static/js/libs/vue.min.js"></script>
+    <script src="/static/js/card.js"></script>
     <script src="/static/js/init.js"></script>
 </head>
 
 <body>
 
-{# Flash message #}
-{% with message = get_flashed_messages()[0] %}
-    {% if message %}
+{{# Flash message #}}
+{{% with message = get_flashed_messages()[0] %}}
+    {{% if message %}}
         <div class="alert alert-info flash-message">{{ message }}</div>
-    {% endif %}
-{% endwith %}
+    {{% endif %}}
+{{% endwith %}}
 
-{% include 'site/includes/nav/nav.html' %}
+{{% include 'site/includes/nav/nav.html' %}}
 
-{# Please DO NOT change the id below #}
+{{# Please DO NOT change the id below #}}
 <div id="main">
-    {% block page_content %}{% endblock %}
+    {{% block page_content %}}{{% endblock %}}
 </div>
 
-{% include 'site/includes/footer/dark-footer.html' %}
+{{% include 'site/includes/footer/dark-footer.html' %}}
 
 
 
-{# JS layout #}
+{{# JS layout #}}
 <script src="/static/js/layout.js"></script>
 
-{# JS macros #}
+{{# JS macros #}}
 <script src="/static/output/macros.js"></script>
 
-<script>
-window.onload = renderCard;
 
 
-function setCartData(o){
-        localStorage.setItem('flask-shop-card', JSON.stringify(o));
-        return false;
-    }
-        
-        
-function getCartData(){
-        return JSON.parse(localStorage.getItem('flask-shop-card'));
-    }
-        
 
-function renderCard(){
-        currentCount = Number($('#cardCount').text())
-        if (typeof(Storage) !== "undefined") {
-            // Code for localStorage/sessionStorage.
-            } else {
-                alert('Корзина магазина не доступна для вашего браузера');
-            // Sorry! No Web Storage support..
-        }
-        var cartData = getCartData() || {}
-        if(cartData !== null) {
-                        for(var item in cartData) {
-                                        if (cartData[item][3] === 0) {
-                continue;
-            }
-            else if (cartData[item][3] < 0) {
-                continue;
-            }
-
-                            currentCount = currentCount+Number(cartData[item][3]);
-                            cardItem = '<li id="li' + item +'"><span class="item"><span class="item-left"><img style="width="50px" height="50px" src="'+ cartData[item][1] + '" alt="" /><span class="item-info">' +
-                '<span>' + cartData[item][0] + '</span><br><span id=span' + item + '>' + cartData[item][2] + ' x ' +  cartData[item][3] + '</span></span></span><span class="item-right"><button onclick="itemDelete('+item+')" class="btn btn-xs btn-danger pull-right">x</button></span></span></li>'
-                $('#cardNav').prepend(cardItem)
-        }
-        $('#cardCount').text(currentCount)
-            }
-        else {
-            alert('LocalStorage is clear!')
-            $('#cardCount').text(Number(0))
-
-    }
-}
-
-
-function itemAdd(id) {
-    var cartData = getCartData() || {}
-    var names = document.getElementById('product_name'+id).innerHTML
-    var photo = document.getElementById('product_photo'+id).getAttribute('src')
-    var price = document.getElementById('product_price'+id).innerHTML
-    var currentCount = $('#cardCount').text()
-    //var setCount = $('#cardCount').text(Number(currentCount)+1)
-
-            if(cartData[id][3] >= 1){
-                cartData[id][3] += 1;
-                var currentCount = Number($('#cardCount').text())
-                $('#cardCount').text(Number(currentCount)+1)
-
-                countItem = Number(($('#span'+id).text()).split('x')[1])
-                $('#span'+id).text(price + ' x ' + (Number(countItem) + 1))
-                } else { // если товара в корзине еще нет, то добавляем в объект
-                    cartData[id] = [name, photo, price, 1];
-                    var cardItem = '<li id="li' + id +'"><span class="item"><span class="item-left"><img style="width="50px" height="50px" src="'+ photo + '" alt="" /><span class="item-info">' +
-                '<span>' + name + '</span><br><span id=span' + id + '>' + price + ' x ' +  cartData[id][3] + '</span></span></span><span class="item-right"><button onclick="itemDelete('+id+')" class="btn btn-xs btn-danger pull-right">x</button></span></span></li>'
-                    var currentCount = Number($('#cardCount').text())
-                    $('#cardCount').text(Number(currentCount)+1)
-                    $('#cardNav').prepend(cardItem)
-
-                }
-                if(!setCartData(cartData)){ // Обновляем данные в LocalStorage
-                    //alert('set data to localstorage')
-                }
-                return false;
-}
-
-function itemDelete(id) {
-    var cartData = getCartData() || {}
-    if(cartData[id][3] >= 2){ 
-                countItem = Number(($('#span'+id).text()).split('x')[1])
-                //alert(countItem)
-                $('#span'+id).text(cartData[id][2] + ' x ' + (Number(countItem) - 1))
-                } 
-                else { 
-                    cartData[id] = [cartData[id][0], cartData[id][1], cartData[id][2], 0];
-                    elem = document.getElementById('li' + id +'')
-                    elem.parentNode.removeChild(elem);
-                }
-                cartData[id][3] -= 1;
-                setCartData(cartData)                
-                currentCount = $('#cardCount').text()
-                $('#cardCount').text(Number(currentCount)-1)
-
-}
-</script>
-
-
-{# JS page #}
-{% block page_js %}{% endblock %}
+{{# JS page #}}
+{{% block page_js %}}{{% endblock %}}
 
 </body>
 </html>

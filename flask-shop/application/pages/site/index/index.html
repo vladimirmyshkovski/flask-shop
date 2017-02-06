@@ -1,17 +1,17 @@
-{% extends "layout.html" %}
+{{% extends "layout.html" %}}
 
-{% block page_title %}Flask-Shop{% endblock %}
-{% block page_js %}
-    <script src="/pages/site/index/index.js"></script>{% endblock %}
-{% block page_css %}
-    <link rel="stylesheet" href="/pages/site/index/index.css"/>{% endblock %}
-{% block page_content %}
-    <div class="container">
-        <h1>Home</h1>
+{{% block page_title %}}Flask-Shop{{% endblock %}}
+{{% block page_js %}}
+    <script src="/pages/site/index/index.js"></script>{{% endblock %}}
+{{% block page_css %}}
+    <link rel="stylesheet" href="/pages/site/index/index.css"/>{{% endblock %}}
+{{% block page_content %}}
+    <div class="container" style="margin-top: 5em">
+        <h1>SneakerBox</h1>
     </div>
-    {% include 'site/includes/carousel/carousel.html' %}
-    {#% include 'site/includes/products/product.html' %#}
-    {#% include 'site/includes/products/products_2.html' %#}
-    {% include 'site/includes/products/product_3.html' %}
+    {{% include 'site/includes/carousel/carousel.html' %}}
+    {{#% include 'site/includes/products/product.html' %#}}
+    {{#% include 'site/includes/products/products_2.html' %#}}
+    {{% include 'site/includes/products/product_3.html' %}}
 
-{% endblock %}
+{{% endblock %}}

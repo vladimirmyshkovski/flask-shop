@@ -27,12 +27,29 @@ try:
 except (AttributeError, NameError):
     pass
 
+class CustomFlask(Flask):
+    jinja_options = Flask.jinja_options.copy()
+    jinja_options.update(dict(
+        block_start_string='{{%',
+        block_end_string='%}}',
+        variable_start_string='{{{',
+        variable_end_string='}}}',
+        comment_start_string='{{#',
+        comment_end_string='#}}',
+    ))
+
 
 def create_app():
     """Create Flask app."""
     config = load_config()
 
-    app = Flask(__name__)
+
+
+
+
+    #app = Flask(__name__)
+    app = CustomFlask(__name__)
+
     app.config.from_object(config)
 
     if not hasattr(app, 'production'):
@@ -79,10 +96,12 @@ def create_app():
     return app
 
 
+
 def register_jinja(app):
     """Register jinja filters, vars, functions."""
     import jinja2
     from .utils import filters, permissions, helpers
+    from jinja2 import Environment
 
     if app.debug or app.testing:
         my_loader = jinja2.ChoiceLoader([
@@ -105,6 +124,8 @@ def register_jinja(app):
     app.jinja_env.filters.update({
         'timesince': filters.timesince
     })
+
+
 
     def url_for_other_page(page):
         """Generate url for pagination."""
@@ -192,3 +213,5 @@ def _import_submodules_from_package(package):
                                                          prefix=package.__name__ + "."):
         modules.append(__import__(modname, fromlist="dummy"))
     return modules
+
+

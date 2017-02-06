@@ -1,35 +1,49 @@
-{% block page_css %}
-<link rel="stylesheet" href="/pages/site/includes/products/product_3.css"/>{% endblock %}
-<div class="container">
+{{% block page_css %}}
+<link rel="stylesheet" href="/pages/site/includes/products/product_3.css"/>{{% endblock %}}
+<div class="container" id="productsGrid">
+{{% for products in all_products | batch(4, '&nbsp;') %}}
 	<div class="row">
-    	<!-- BEGIN PRODUCTS -->
-      {% for product in all_products %}
+      {{% for product in products %}}
   		<div class="col-md-3 col-sm-6">
     		<span class="thumbnail">
-      			<a href="{{url_for('site.product', keyword=product.id)}}"><img src="{{product.image[1:-1][1:].split("', '")[0]}}" alt="{{product.name}}"></a>
-      			<h6>{{product.name}}</h6>
-      			<div class="ratings">
+      			<a href="{{{url_for('site.product', keyword=product.link.split('/')[3])}}}"><img id="product_photo{{{product.id}}}" src="http://{{{product.images[2:-2].split("', '")[0]}}}" alt="{{{product.name}}}"></a>
+      			 <h6 id="product_name{{{product.id}}}" style="height: 2em">{{{product.name}}}</h6>
+      			<!--div class="ratings">
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star-empty"></span>
+                </div-->
+            <div style="height: 2em">
+              {{% for size in product.sizes[2:-2].split("', ") %}}
+                    <span>{{{size}}}</span>
+              {{% endfor %}}
                 </div>
       			<p></p>
-      			<hr class="line">
-      			<div class="row">
+      			<!--hr class="line"-->
+      			<div class="row" style="margin-top: 35px; padding-top: 0px;">
       				<div class="col-md-6 col-sm-6">
-      					<p class="price">$29,90</p>
+      					
+              {{% if product.prices[2:-2].split("', '")[1] == 'None' %}}
+              <p id="product_price{{{product.id}}}" class="price">{{{product.prices[2:-2].split("', '")[0] }}}</p>
+              {{% else %}}
+              <p id="product_price{{{product.id}}}"  class="price">{{{product.prices[2:-2].split("', '")[0] }}}<span style="font-size: 15px;text-decoration: line-through">{{{product.prices[2:-2].split("', '")[1] }}}<span></p>
+              
+              {{% endif %}}</span>
       				</div>
+
+
+
       				<div class="col-md-6 col-sm-6">
-      					<button class="btn btn-success right" > BUY ITEM</button>
+      					<button class="btn btn-success right" onclick="itemAdd({{{product.id}}})"> BUY ITEM</button>
       				</div>
       				
       			</div>
     		</span>
   		</div>
-      {% endfor %}
-  		<!-- END PRODUCTS -->
+      {{% endfor %}}
 	</div>
+{{% endfor %}}
 
 </div>

@@ -14,3 +14,5 @@ application/pages/**/*.css
 application/static/css/**/*.css
 !application/static/css/libs/*.css
 application/static/output/
+*.swp
+

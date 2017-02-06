@@ -18,13 +18,26 @@
      * Show flash message.
      */
     function showFlash() {
-        $('.flash-message').slideDown('fast');
+        $('.flash-message').slideDown('show');
     }
 
     /**
      * Hide flash message.
      */
     function hideFlash() {
-        $('.flash-message').slideUp('fast');
+        $('.flash-message').slideUp('show');
     }
+
+    var productsGrid = new Vue({
+    el: '#productsGrid',
+    methods: {
+        say: function (message) {
+      alert(message)
+            }
+        }    
+    })
+
+
+
+
 })();

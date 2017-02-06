@@ -1,7 +1,8 @@
 # coding: utf-8
 from flask import render_template, Blueprint, flash
-from ..models import db, Product
+from ..models import db, Product, Parse
 import csv 
+import json
 
 
 bp = Blueprint('site', __name__)
@@ -11,7 +12,7 @@ bp = Blueprint('site', __name__)
 def index():
     """Index page."""
     new_products = Product.query.order_by(Product.created_at.desc()).limit(8)
-    all_products = Product.query.limit(6)
+    all_products = Product.query.limit(16)
 
     return render_template('site/index/index.html', 
     	new_products=new_products,
@@ -27,23 +28,24 @@ def about():
 @bp.route('/<keyword>')
 def product(keyword):
     """Product page."""
-    print(keyword)
     query = Product.query
-    product = query.filter(Product.id == keyword).first()
+    product = query.filter(Product.link.endswith(keyword)).first()
+    product.views = int(product.views)+1
+    db.session.add(product)
+    db.session.commit()
+    
     return render_template('site/product/product.html', product=product)
 
 
-#@bp.context_processor
-#def menu():
+@bp.context_processor
+def menu():
+	categories = [category.subname for category in Product.query.group_by(Product.subname).all()]
+	return dict(categories=categories)
 
 
 
 
-
-
-
-
-@bp.route('/parse')
+@bp.route('/parse', methods=['GET'])
 def parse():
 	db.create_all()
 
@@ -53,21 +55,22 @@ def parse():
 	from selenium import webdriver
 	import time
 	import math
+	import ast
+	from sqlalchemy.exc import IntegrityError, InterfaceError, InvalidRequestError
+
 
 	BASE_URL = "http://distance.pl/kolekcja.html" 
 	driver = webdriver.PhantomJS()
 
 
 	def get_html(url):
-	    #driver = webdriver.PhantomJS()
 	    driver.get(url)
 	    driver.set_window_position(0,0)
 	    driver.set_window_size(100000, 200000)
 	    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 	    time.sleep(5) 
 	    html = driver.page_source
-	    #driver.save_screenshot('screen.png')
-	    #driver.quit()
+
 	    return html
 
 	def get_soup(html):
@@ -79,7 +82,6 @@ def parse():
 	def get_page_count(html):
 	    soup = BeautifulSoup(html, "html.parser")
 	    productsleft = soup.find('div', class_='pagination__item_lefts').b.text
-	    #print('products has left : ' + productsleft)
 	    return productsleft
 
 
@@ -89,7 +91,6 @@ def parse():
 	    products = soup.find('ul', class_='pList').find_all('a', 'pList__item__link')
 	    for link in products:
 	        links.append(link.get('href'))
-	    #print(links)
 	    return links
 
 
@@ -103,46 +104,55 @@ def parse():
 	    return sub
 
 
-	def get_img(soup):
-	    try:
-	        img = soup.find('img', class_='gtm--big_image').get('data-lazy')
-	    except AttributeError: return None
-	    return img
-
-
 	def get_imgs(soup):
 	    try:
 	        images = soup.find('div', class_='product__images__thumbs').find_all('a')
 	        imgs = []
 	        for item in images:
-	            imgs.append(item.get('href'))
+	            imgs.append(item.get('href')[2:])
 	    except AttributeError: return None
 	    return imgs
 
 
 	def get_prices(soup):
 	    try:
-	        prc = soup.find('div', class_='product__data__field__content--price').span
-	        prices = []
-	        for item in prc.find_all():
-	            prices.append(item.text)
+	        prc = soup.find('div', class_='product__data__field__content--price')
+	        em = (prc.find('em').text).split(' ')[0]
+	        sale = 'None'
+	       	if prc.find('del'):
+	       		sale = (prc.find('del').text).split(' ')[0]
+	       	prices = [em, sale]
 	    except AttributeError: return None
 	    return prices
 
 
-	def get_colors(soup):
+	def get_colors_imgs(soup):
 	    try:
-	        clrs = soup.find('div', class_='product_-data__colors__list')
-	        colors_links = [i.get('href') if i else [None] for i in clrs.find_all('a')]
-	        colors_imgs = [i.get('src') for i in clrs.find_all('img')]
-	        colors = {link.link: {img.img for img in colors_imgs} for link in colors_links}
+	        clrs = soup.find('div', class_='product__data__colors__list').find_all('li', class_='')
+	        colors_imgs = []
+	        for i in clrs:
+	        	colors_imgs.append(i.img.get('src'))
 	    except AttributeError: return None
-	    return colors
+	    return colors_imgs
+
+
+	def get_colors_links(soup):
+	    try:
+	        clrs = soup.find('div', class_='product__data__colors__list').find_all('li', class_='')
+	        colors_links = []
+	        for i in clrs:
+	        	if i.a:
+	        		colors_links.append(i.a.get('href'))
+	        	else:
+	        		colors_links.append('None')
+	        	#colors_links.append(i.a.get('href'))
+	    except AttributeError: return None
+	    return colors_links
 
 
 	def get_sizes(soup):
 	    try:
-	        szs = soup.find('div', class_='products__data__sizes__data').find_all('label')
+	        szs = soup.find('div', class_='product__data__sizes__data').find_all('label')
 	        sizes = []
 	        for i in szs:
 	            sizes.append(i.text)
@@ -159,75 +169,97 @@ def parse():
 
 
 	def get_parse(soup):
-	    #soup = BeautifulSoup(html, 'html.parser')
-	    sub = get_sub(soup)
-	    img = get_img(soup)
-	    #img = check(soup.find('img', class_='gtm--big_image').get('data-lazy'))
-	    imgs = get_imgs(soup)
-	    #imgs = check(soup.find('div', class_='product__images__thumbs').find_all('a'))
-	    prices = get_prices(soup)
-	    #prices = check(soup.find('div', class_='product__data__field__content--price').span)
-	    colors = get_colors(soup)
-	    #colors = check(soup.find('div', class_='product__data__colors__list'))
-	    sizes = get_sizes(soup)
-	    #sizes = check(soup.find('div', class_='product__data__sizes__data').find_all('label'))
-	    params = get_params(soup)
-	    #params = check(soup.find('div', class_='pTabs__tab').find_all('tr'))
-	    product = []
-	    product.append({
-	        'sub':sub[-2],
-	        'name':sub[-1],
-	        'img':img,
-	        'imgs':imgs,
-	        'prices':prices,
-	        'colors':colors,
-	        #'colors-links':[color.get('href') if colors else [None] for color in colors.find_all('a')],
-	        #'colors-imgs':[color.get('src') for color in colors.find_all('img')],
-	        'sizes':sizes,
-	        'params':params
-	            })
-	        #'colors_links':[i.find('a').get('href') for i in colors],
-	        #'color_imgs':[i.find('img').get('src') for i in colors]
-	    print(product)
-	    return product
+		sub = get_sub(soup)
+		if sub: 
+			subname = None
+		else:
+			subname = sub[-2].replace('\n', '')
+		imgs = get_imgs(soup)
+		prices = get_prices(soup)
+		colors_imgs = get_colors_imgs(soup)
+		colors_links = get_colors_links(soup)
+		sizes = get_sizes(soup)
+		params = get_params(soup)
+		product = []
+		product = dict(
+	    	sub 		= subname,
+	        name 		= (sub[-1].replace('\t', '')).replace('\n', ''),
+	        imgs 		= str(imgs),
+	        prices 		= str(prices),
+			colors_imgs = str(colors_imgs),
+			colors_links = str(colors_links),
+	        sizes 		= str(sizes),
+			params 		= str(params)
+	            )
+		return product
 
 	links = []
+	parsing = Parse.query.order_by(Parse.id.desc()).first()
 	n = 1
-	while (int(get_page_count(get_html(BASE_URL + '?page=' + str(n))))) > 0:
-	        #lastpage = int(get_page_count(get_html(BASE_URL + '?page=' + str(n)))) / int(len(get_products(get_html(BASE_URL + '?page=' + str(n))))) 
-	    linkss = get_links(get_html(BASE_URL + '?page=' + str(n))) 
-	    for link in linkss:
-	       	product = get_parse(get_soup(get_html(link)))
-	       	product = dict(product)
-	        prod = Product(name=product['name'], subname=product['sub'], image=product['image'], images=product['images'], prices=product['prices'], colors=product['colors'], sizes=product['sizes'])
-	        db.session.add(prod)
-	        db.session.commit()
-	    n += 1
-	        #print('products count is : ' + str (len(products)))
-	        #print('parsed URL is : ' + BASE_URL + '?page=' + str(n))
-	        #print('Count of products : ' + str(len(products)))
-	    #products.extend(get_products(get_html(BASE_URL + '?page=' + str(n))))
-	driver.quit()
-	    #save(products, BASE_URL.split('/')[-1].replace('.html', '') + '.csv')
-	
-	"""Parsing csv file
-
-
-	with open('/home/narnik/Программы/BS4/distance/distance-complete.csv') as f:
-		r = csv.reader(f)
-		for i in r:
-			print(i[0])
-			flash(i)
-			product = Product(
-				name=i[0],
-				subname=i[1],
-				image=i[3],
-				images=i[4],
-				prices=i[5],
-				colors=i[6],
-				sizes=i[7],
-				)
-			db.session.add(product)
+	if parsing is None:
+		parsing = Parse(current_product=0, count_products=get_page_count(get_html(BASE_URL + '?page=' + str(n))))
+		db.session.add(parsing)
+		db.session.commit()
+		k = 0
+	else:
+		if int(parsing.current_product) == int(parsing.count_products):
+			parsing = Parse(current_product=0, count_products=get_page_count(get_html(BASE_URL + '?page=' + str(n))))
+			db.session.add(parsing)
 			db.session.commit()
-			"""
+			k = 0
+		else:
+			print('parsing is not None!')
+		k = parsing.current_product
+		n = parsing.page_number
+		print('n is : ' + str(n))
+		print('k is : ' + str(k))
+	while (int(get_page_count(get_html(BASE_URL + '?page=' + str(n))))) > 0:
+		linkss = get_links(get_html(BASE_URL + '?page=' + str(n)))
+		for link in linkss:
+			try:
+				product = get_parse(get_soup(get_html(link)))
+				thisproduct = Product.query.filter(Product.name == product['name']).first()
+				if thisproduct is not None:
+					if int(thisproduct.prices[2:-2].split("', '")[0][:-3]) == int(product['prices'][2:-2].split("', '")[0][:-3]):
+						print(int(thisproduct.prices[2:-2].split("', '")[0][:-3]))
+						print(int(product['prices'][2:-2].split("', '")[0][:-3]))
+						pass
+						print('product is finded!')
+					else:
+						print(thisproduct.prices[2:-2].split("', '")[0][:-3])
+						print(product['prices'][2:-2].split("', '")[0][:-3])
+						thisproduct.prices = product['prices']
+						db.session.add(thisproduct)
+						print('prise is updated!')
+				else:
+					print(product['prices'][2:-2].split("', '")[0][:-3])
+					print(link)
+					prod = Product(
+							link 		= link,
+							name 		= product['name'], 
+							subname 	= product['sub'],
+							images 		= product['imgs'],
+							colors_imgs = product['colors_imgs'],
+							colors_links= product['colors_links'],
+							prices 		= product['prices'],
+							sizes 		= product['sizes'],
+							params 		= product['params']
+						)
+
+					db.session.add(prod)
+					print(prod)
+					k = int(k)+1
+					print('k is : ' + str(k))
+					parsing.current_product = k
+					db.session.add(parsing)
+				db.session.commit()
+			except IntegrityError: 
+				continue
+			except InvalidRequestError: 
+				continue
+		n = int(n) + 1
+		parsing.page_number = str(n)
+		print(parsing.page_number)
+	driver.quit()
+
 	return render_template('site/index/index.html')
