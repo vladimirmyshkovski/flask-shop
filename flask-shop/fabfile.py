@@ -11,7 +11,7 @@ def deploy():
     with cd('/var/www/flask-shop/flask-shop'):
         with shell_env(MODE='PRODUCTION'):
             run('git reset --hard HEAD')
-            run('git pull')
+            #run('git pull')
             run('npm install')
             run('gulp')
             with prefix('source venv/bin/activate'):
