@@ -16,7 +16,7 @@ class Config(object):
 
     # Site domain
     SITE_TITLE = "flask-shop"
-    SITE_DOMAIN = "http://localhost:5000"
+    SITE_DOMAIN = "http://localhost:8888"
 
     # SQLAlchemy config
     # See:
@@ -32,4 +32,4 @@ class Config(object):
     SENTRY_DSN = ''
 
     # Host string, used by fabric
-    HOST_STRING = "root@12.34.56.78"
+    HOST_STRING = "root@185.87.193.188"
