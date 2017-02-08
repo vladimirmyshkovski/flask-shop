@@ -9,10 +9,10 @@ class ProductionConfig(Config):
     SESSION_COOKIE_NAME = 'flask-shop_session'
 
     # Site domain
-    SITE_DOMAIN = "http://www.flask-shop.com"
+    SITE_DOMAIN = "http://www.sneakerbox.by"
 
     # Db config
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:password@localhost/flask-shop"
+    SQLALCHEMY_DATABASE_URI = "postgresql://localhost/narnik"
 
     # Sentry
     SENTRY_DSN = ''
