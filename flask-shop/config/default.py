@@ -16,7 +16,8 @@ class Config(object):
 
     # Site domain
     SITE_TITLE = "flask-shop"
-    SITE_DOMAIN = "http://localhost:8888"
+    #SITE_DOMAIN = "http://localhost:8888"
+    SITE_DOMAIN = "http://www.sneakerbox.by/"
 
     # SQLAlchemy config
     # See:
