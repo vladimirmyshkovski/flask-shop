@@ -12,7 +12,7 @@ class ProductionConfig(Config):
     SITE_DOMAIN = "http://www.sneakerbox.by"
 
     # Db config
-    SQLALCHEMY_DATABASE_URI = "postgresql://localhost/narnik"
+    SQLALCHEMY_DATABASE_URI = "postgresql:///narnik"
 
     # Sentry
     SENTRY_DSN = ''
