@@ -1,0 +1,62 @@
+{% block page_css %}
+<link rel="stylesheet" href="/pages/site/includes/footer/dark-footer.css"/>{% endblock %}
+<div class="container">
+    <div class="row">
+        <div class="row">
+            <div class="col-md-9">
+                <h3>
+                    Новые поступления</h3>
+            </div>
+        </div>
+                {% for products in new_products | batch(4, '&nbsp;')%}
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-sm-3">
+                            <div class="col-item" id="product_id{{product.id}}">
+                            <div class="carousel slide" data-ride="carousel" id="quote-carousel{{product.id}}" data-interval="false">
+                                <ol class="carousel-indicators">
+                                    {% for image in product.image[2:-2].split("', '") %}
+                                    <li data-target="#quote-carousel{{product.id}}" data-slide-to="{{ loop.index0 }}" {% if loop.first %} class="active"{% else %}{% endif %} style="border: 1px solid black"></li>
+                                    {% endfor %}
+                                </ol>
+                                <div class="carousel-inner">
+                                    {% for image in product.image[2:-2].split("', '") %}
+                                    <div class="item {% if loop.first %} active{% else %}{% endif %}">
+                                        <div class="photo">
+                                            <img src="http:{{image}}" {% if loop.first %} id="product_photo{{product.id}}" {% endif %} class="img-responsive" alt="{{product.nane}}" />
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                                <div class="info">
+                                    <div class="row">
+                                        <div class="price col-md-6">
+                                            <h5 id="product_name{{product.id}}">
+                                                {{product.name}}</h5>
+                                            <h5 class="price-text-color" id="product_price{{product.id}}">
+                                                $199.99</h5>
+                                        </div>
+                                        <div class="rating hidden-sm col-md-6">
+                                            <i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                                            </i><i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                                            </i><i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <div class="separator clear-left">
+                                        <p>
+                                            <a class="fa fa-shopping-cart fa-2x btn btn-md" onclick="itemAdd({{product.id}})" class="hidden-sm"></a>
+                                            <a class="fa fa-list fa-2x btn btn-md" class="hidden-sm"></a>
+                                        </p>
+                                    </div>
+                                    <div class="clearfix">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endfor %}
+
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
