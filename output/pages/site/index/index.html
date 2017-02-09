@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Flask-Shop{% endblock %}
+{% block page_js %}
+    <script type="text/javascript" charset="utf-8" src="/pages/site/index/index_07fb3d8.js"></script>
+{% endblock %}
+{% block page_css %}
+    <link type="text/css" rel="stylesheet" href="/pages/site/index/index_d41d8cd.css">
+{% endblock %}
+{% block page_content %}
+    <div class="container">
+        <h1>Home</h1>
+    </div>
+    {% include 'site/includes/carousel/carousel.html' %}
+    {% include 'site/includes/products/products.html' %}
+    {% include 'site/includes/products/products_2.html' %}
+{% endblock %}

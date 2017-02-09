@@ -1,0 +1,37 @@
+{% block page_css %}
+<link rel="stylesheet" href="/pages/site/includes/products/product_3.css"/>{% endblock %}
+<div class="container">
+	<div class="row">
+    	<!-- BEGIN PRODUCTS -->
+      {% for products in all_products | batch(4, '&nbsp;') %}
+  		<div class="col-md-3 col-sm-6">
+        {% for product in products %}
+    		<span class="thumbnail">
+      			<img src="{{product.image[1:-1][1:].split("', '")[0]}}" alt="{{product.name}}">
+      			<h4>{{product.name}}</h4>
+      			<div class="ratings">
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star-empty"></span>
+                </div>
+      			<p></p>
+      			<hr class="line">
+      			<div class="row">
+      				<div class="col-md-6 col-sm-6">
+      					<p class="price">$29,90</p>
+      				</div>
+      				<div class="col-md-6 col-sm-6">
+      					<button class="btn btn-success right" > BUY ITEM</button>
+      				</div>
+      				
+      			</div>
+    		</span>
+        {% endfor %}
+  		</div>
+      {% endfor %}
+  		<!-- END PRODUCTS -->
+	</div>
+
+</div>

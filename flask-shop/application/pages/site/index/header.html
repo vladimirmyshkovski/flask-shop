@@ -1,0 +1,150 @@
+		<header class="main-menu-area">
+			<div class="container">
+				<div class="row">
+					<!-- SHOPPING-CART START -->
+					<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea">
+						<div class="shopping-cart-out pull-right">
+							<div class="shopping-cart" id="shoppingcart">
+							
+							        <a class="shop-link" href="cart.html" title="View my shopping cart">
+        <i class="fa fa-shopping-cart cart-icon"></i>
+        <b>Корзина</b>
+        <span class="ajax-cart-quantity" id="count"></span>
+        </a>
+								<div class="shipping-cart-overly" id="cardlist">
+								        <div id="shopcard">
+
+								        </div>
+
+        <div class="shipping-total-bill">
+        <div class="cart-prices">
+        <span class="shipping-cost"></span>
+        <span>Shipping $</span>
+        </div>
+        <div class="total-shipping-prices">
+        <span class="shipping-total" id="total"></span>
+        <span>Total $</span>
+        </div>
+        </div>
+									<div class="shipping-checkout-btn">
+										<a href="checkout.html">Check out <i class="fa fa-chevron-right"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- SHOPPING-CART END -->
+					<!-- MAINMENU START -->
+					<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 no-padding-right menuarea">
+						<div class="mainmenu">
+							<nav>
+								<ul class="list-inline mega-menu">
+									<li><a href="index">Home</a>
+										<!-- DROPDOWN MENU START -->
+										<!--<div class="home-var-menu">
+											<ul class="home-menu">
+												<li><a href="index.html">Home variation 1</a></li>
+												<li><a href="index-2.html">Home variation 2</a></li>
+											</ul>
+										</div>-->
+										<!-- DROPDOWN MENU END -->
+									</li>
+    {% for gender in gen %}
+        <li>
+            <a href="{{ url_for('shop.shop_grid', gender=gender) }}">{{gender}}</a>
+                <!-- DRODOWN-MEGA-MENU START -->
+                <div class="drodown-mega-menu">
+
+                    {% for category in gen[gender] %}
+                        <div class="left-mega col-xs-6">
+                        <div class="mega-menu-list">
+
+                        <a class="mega-menu-title" href="{{ url_for('shop.shop_grid', gender=gender, category=category) }}">{{category}}</a>
+                            <ul>
+                            {% for subcategory in gen[gender][category] %}
+                            <li><a href="{{ url_for('shop.shop_grid', gender=gender, subcategory=subcategory, category=category) }}">{{subcategory}}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                    </div>
+                                    </div>
+                                    {% endfor %}
+									{% endfor %}
+									
+									
+									<li><a href="single-product.html#">Доставка</a></li>
+									<li><a href="about-us.html">О нас</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<!-- MAINMENU END -->
+				</div>
+				<div class="row">
+					<!-- MOBILE MENU START -->
+					<div class="col-sm-12 mobile-menu-area">
+						<div class="mobile-menu hidden-md hidden-lg" id="mob-menu">
+							<span class="mobile-menu-title">MENU</span>
+							<nav>
+								<ul>
+									<li><a href="index.html">Home</a>
+										<ul>
+											<li><a href="index.html">Home variation 1</a></li>
+											<li><a href="index-2.html">Home variation 2</a></li>
+										</ul>
+									</li>
+									<li><a href="shop-gird.html">Women</a>
+										<ul>
+											<li><a href="shop-gird.html">Tops</a>
+												<ul>
+													<li><a href="shop-gird.html">T-Shirts</a></li>
+													<li><a href="shop-gird.html">Blouses</a></li>
+												</ul>
+											</li>
+											<li><a href="shop-gird.html">Dresses</a>
+												<ul>
+													<li><a href="shop-gird.html">Casual Dresses</a></li>
+													<li><a href="shop-gird.html">Summer Dresses</a></li>
+													<li><a href="shop-gird.html">Evening Dresses</a></li>
+												</ul>
+											</li>
+
+										</ul>
+									</li>
+									<li><a href="shop-gird.html">men</a>
+										<ul>
+											<li><a href="shop-gird.html">Tops</a>
+												<ul>
+													<li><a href="shop-gird.html">Sports</a></li>
+													<li><a href="shop-gird.html">Day</a></li>
+													<li><a href="shop-gird.html">Evening</a></li>
+												</ul>
+											</li>
+											<li><a href="shop-gird.html">Blouses</a>
+												<ul>
+													<li><a href="shop-gird.html">Handbag</a></li>
+													<li><a href="shop-gird.html">Headphone</a></li>
+													<li><a href="shop-gird.html">Houseware</a></li>
+												</ul>
+											</li>
+											<li><a href="shop-gird.html">Accessories</a>
+												<ul>
+													<li><a href="shop-gird.html">Houseware</a></li>
+													<li><a href="shop-gird.html">Home</a></li>
+													<li><a href="shop-gird.html">Health & Beauty</a></li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+									<li><a href="shop-gird.html">clothing</a></li>
+									<li><a href="shop-gird.html">tops</a></li>
+									<li><a href="shop-gird.html">T-shirts</a></li>
+									<li><a href="single-product.html#">Delivery</a></li>
+									<li><a href="about-us.html">About us</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<!-- MOBILE MENU END -->
+				</div>
+			</div>
+		</header>

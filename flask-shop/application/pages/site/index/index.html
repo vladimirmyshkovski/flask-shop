@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Flask-Shop{% endblock %}
+{% block page_js %}
+    <script src="/pages/site/index/index.js"></script>{% endblock %}
+{% block page_css %}
+    <link rel="stylesheet" href="/pages/site/index/index.css"/>{% endblock %}
+{% block page_content %}
+    <div class="container">
+        <h1>Home</h1>
+    </div>
+    {% include 'site/includes/carousel/carousel.html' %}
+    {% include 'site/includes/products/products.html' %}
+    {% include 'site/includes/products/products_2.html' %}
+{% endblock %}

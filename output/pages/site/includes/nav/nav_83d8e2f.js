@@ -1,0 +1,1 @@
+$(document).ready(function(){$(".dropdown").hover(function(){$(".dropdown-menu",this).not(".in .dropdown-menu").stop(!0,!0).slideDown("400"),$(this).toggleClass("open")},function(){$(".dropdown-menu",this).not(".in .dropdown-menu").stop(!0,!0).slideUp("400"),$(this).toggleClass("open")})});
