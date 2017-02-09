@@ -14,7 +14,7 @@ def deploy():
             #run('git pull')
             run('sudo npm install')
             #run('gulp')
-            with prefix('source venv/bin/activate'):
+            with prefix('source ../venv/bin/activate'):
                 run('sudo pip install -r requirements.txt')
                 run('sudo python manage.py db upgrade')
                 run('sudo python manage.py build')
