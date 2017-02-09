@@ -10,10 +10,10 @@ def deploy():
     env.host_string = config.HOST_STRING
     with cd('/var/www/flask-shop'):
         with shell_env(MODE='PRODUCTION'):
-            run('git reset --hard HEAD')
-            run('git pull')
+            #run('git reset --hard HEAD')
+            #run('git pull')
             run('npm install')
-            run('gulp')
+            #run('gulp')
             with prefix('source venv/bin/activate'):
                 run('pip install -r requirements.txt')
                 run('python manage.py db upgrade')
