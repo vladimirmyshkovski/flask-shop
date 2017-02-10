@@ -19,6 +19,13 @@ def index():
     	all_products=all_products)
 
 
+@bp.route('/layout')
+def layout():
+    """Layout page."""
+
+    return render_template('layout.html')
+
+
 @bp.route('/about')
 def about():
     """About page."""
